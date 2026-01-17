@@ -10,7 +10,7 @@ function App() {
   return (
     <main>
       <Navbar />
-      <Hero />
+      {/* <Hero /> */}
       <About />
     </main>
   )
