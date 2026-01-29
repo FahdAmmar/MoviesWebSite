@@ -1,7 +1,7 @@
 import { FaFilm, FaPlay, FaStar, FaCalendarAlt, FaTicketAlt, FaHeart } from "react-icons/fa";
 import { GiFilmStrip, GiPopcorn } from "react-icons/gi";
 import { useState, useEffect } from "react";
-const About = () => {
+const About = ({ inp, setInp }) => {
 
     const [items, setItems] = useState([]);
     const [page, setPage] = useState(1);
@@ -10,33 +10,32 @@ const About = () => {
 
 
     const API_KEY = "68f0f041"; // ضع مفتاحك هنا
-    const QUERY = "Avengers"; // الكلمة المفتاحية للبحث (يمكنك تغييرها)
+    const QUERY = inp.trim().toLowerCase()
+    console.log("from URL " + QUERY)
 
-
+    const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${"dark"}&page=${page}`;
 
     const fetchMovies = async () => {
-        if (!hasMore) return;
+        if (loading || !hasMore) return;
         setLoading(true);
-
-        const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${QUERY}&page=${page}`;
         try {
             const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
 
             if (data.Response === "True") {
                 setItems(prev => [...prev, ...data.Search]);
                 console.log(items)
 
-                // إذا وصلنا إلى 50 عنصر نوقف التحميل
                 if (items.length + data.Search.length >= 50) {
                     setHasMore(false);
                 }
             } else {
                 setHasMore(false);
-                console.log("لا توجد نتائج إضافية:", data.Error);
+                console.log("No Data", data.Error);
             }
         } catch (error) {
-            console.error("خطأ أثناء الجلب:", error);
+            console.error(" Error to ftech data:", error);
         }
         setLoading(false);
     };

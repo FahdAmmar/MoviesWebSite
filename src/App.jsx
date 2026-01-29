@@ -7,11 +7,13 @@ import Hero from './components/Hero';
 import About from './components/About';
 
 function App() {
+  const [inp, setInp] = useState("")
+
   return (
     <main>
-      <Navbar />
+      <Navbar inp={inp} setInp={setInp} />
       {/* <Hero /> */}
-      <About />
+      <About inp={inp} setInp={setInp} />
     </main>
   )
 }

@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from "lucide-react";
 
-function Navbar() {
+function Navbar({ inp, setInp }) {
     const [toggleNavbar, setToggleNavbar] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const input = inputValue.trim();
+    const input = inp.trim();
     const key = "68f0f041";
 
     function mobileDrawerOpen() {
         setToggleNavbar(!toggleNavbar);
     }
+
 
     useEffect(() => {
         const controller = new AbortController();
@@ -54,16 +55,16 @@ function Navbar() {
     useEffect(() => {
         const handleScroll = () => {
 
-            if (window.scrollY > 700) {
-                if (inputValue !== "") {
-                    setInputValue("")
+            if (window.scrollY > 1000) {
+                if (inp !== "") {
+                    setInp("")
                 }
             }
         };
 
         window.addEventListener('scroll', handleScroll);
 
-    }, [inputValue])
+    }, [inp, setInp])
 
     return (
         <header className='flex w-full z-50 transition-all duration-300 sticky  top-0 left-0 bg-neutral-800 '>
@@ -90,13 +91,13 @@ function Navbar() {
                         <div className="relative">
                             <input
                                 type="text"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                value={inp}
+                                onChange={(e) => setInp(e.target.value)}
                                 placeholder='search movie ...'
                                 className='px-4 py-2 w-48 focus:w-55 bg-neutral-300 rounded-full text-2xl text-white'
                             />
 
-                            {inputValue && (
+                            {inp && (
                                 <div className='absolute top-12 left-0 w-64 max-h-96 bg-neutral-800 rounded-lg z-50 overflow-y-auto shadow-lg'>
                                     {loading ? (
                                         <div className="p-4 text-white text-center">
@@ -138,7 +139,7 @@ function Navbar() {
                                         ))
                                     ) : (
                                         <div className="p-4 text-neutral-400 text-center">
-                                            {inputValue.trim() !== "" ? "No movies found" : "Type to search"}
+                                            {inp.trim() !== "" ? "No movies found" : "Type to search"}
                                         </div>
                                     )}
                                 </div>
@@ -155,7 +156,7 @@ function Navbar() {
 
                 {/* Mobile Navigation */}
                 {toggleNavbar && (
-                    <nav className="lg:hidden w-full bg-neutral-800 z-50 absolute right-0 top-12 py-8 flex flex-col justify-center items-center ">
+                    <nav className="lg:hidden w-full bg-neutral-800 z-50 absolute right-0 top-15 py-8 flex flex-col justify-center items-center ">
                         <div className="flex flex-col space-y-4 ">
                             <a href="#movies" className='text-white  hover:text-red-400 font-medium transition-all capitalize text-center'>movies</a>
                             <a href="#tvshows" className='capitalize text-white hover:text-red-400 font-medium transition-all text-center'>tv shows</a>
@@ -166,11 +167,11 @@ function Navbar() {
                             type="text"
                             placeholder='search movie ...'
                             className='px-4 py-3 w-64 bg-neutral-700 rounded-lg text-white mt-6 border border-neutral-600 focus:border-pink-500 focus:outline-none'
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
+                            value={inp}
+                            onChange={(e) => setInp(e.target.value)}
                         />
                         {/*Sart search mobile */}
-                        {inputValue && (
+                        {inp && (
                             <div className='w-full h-full bg-neutral-800 absolute top-5/6 flex flex-row gap-2 flex-wrap  overflow-y-auto justify-center mb-4'>
                                 {loading ? (<p>Loading...</p>)
                                     : error ? (<p className='text-red-300'>Not founde it</p>)
