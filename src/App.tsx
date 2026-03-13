@@ -12,30 +12,22 @@ import MovieDetails from './pages/MovieDetails';
 
 const App: React.FC = () => {
   return (
-    // مزود السياق لإدارة الحالة
     <MovieProvider>
-      // إعدادات التوجيه
       <Router>
-        <div className="min-h-screen bg-netflix-black">
-          {/* شريط التنقل العلوي */}
+        <div className="min-h-screen min-w-screen bg-black ">
           <Header />
 
-          {/* المسارات والصفحات */}
-          <main>
+          <main  >
             <Routes>
-              {/* الصفحة الرئيسية */}
               <Route path="/" element={<Home />} />
 
-              {/* صفحة المفضلة */}
               <Route path="/favorites" element={<Favorites />} />
 
-              {/* صفحة تفاصيل الفيلم */}
               <Route path="/movie/:imdbID" element={<MovieDetails />} />
             </Routes>
+            <Footer />
           </main>
 
-          {/* تذييل الصفحة */}
-          <Footer />
         </div>
       </Router>
     </MovieProvider>

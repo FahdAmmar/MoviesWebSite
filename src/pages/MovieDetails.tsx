@@ -65,7 +65,7 @@ const MovieDetails: React.FC = () => {
                 }}
             >
                 {/* طبقة التعتيم */}
-                <div className="absolute inset-0 bg-gradient-to-t from-netflix-black via-netflix-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-netflix-black via-netflix-black/50 to-transparent" />
 
                 {/* زر الرجوع */}
                 <button
@@ -85,7 +85,7 @@ const MovieDetails: React.FC = () => {
                 <div className="bg-netflix-dark/95 backdrop-blur-sm rounded-lg p-8">
                     <div className="flex flex-col md:flex-row gap-8">
                         {/* بوستر الفيلم */}
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                             {movie.Poster !== 'N/A' ? (
                                 <img
                                     src={movie.Poster}

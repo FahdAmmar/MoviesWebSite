@@ -17,17 +17,16 @@ const Home: React.FC = () => {
     }, []);
 
     return (
-        // حاوية الصفحة الرئيسية
-        <div className="min-h-screen pt-20">
-            {/* قسم البانر الرئيسي */}
-            <section className="relative h-[60vh] bg-gradient-to-b from-netflix-red/20 to-netflix-black">
-                <div className="container mx-auto px-4 h-full flex items-center justify-center">
-                    <div className="text-center">
-                        {/* عنوان ترحيبي */}
-                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-4">
+        <div className="min-h-screen min-w-screen  pt-15 mx-auto">
+
+            <section className="relative h-[60vh] bg-linear-to-b from-red-800/20 to-black w-full">
+
+                <div className="container mx-auto px-4 h-full w-full flex items-center justify-center">
+                    <div className="text-center z-10">
+                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">
                             Welcome to Netflix
                         </h1>
-                        <p className="text-netflix-gray text-lg mb-8 max-w-2xl mx-auto">
+                        <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
                             Discover thousands of movies and TV shows. Search for your favorites
                             and add them to your list.
                         </p>
@@ -36,13 +35,13 @@ const Home: React.FC = () => {
             </section>
 
             {/* قسم البحث */}
-            <section className="container mx-auto px-4 py-8">
+            <section className="container mx-auto min-w-screen  px-4 py-8">
                 <SearchBar />
 
                 {/* عرض حالة التحميل */}
                 {state.loading && (
                     <div className="text-center py-12">
-                        <div className="loading text-netflix-red text-2xl">Loading...</div>
+                        <div className="loading  text-2xl">Loading...</div>
                     </div>
                 )}
 
