@@ -3,7 +3,7 @@
 
 import React from 'react';
 import MovieCard from './MovieCard';
-import { Movie } from '../types';
+import type { Movie } from '../types';
 
 interface MovieListProps {
     movies: Movie[];
@@ -22,12 +22,12 @@ const MovieList: React.FC<MovieListProps> = ({ movies, title }) => {
             {/* عرض رسالة عند عدم وجود أفلام */}
             {movies.length === 0 ? (
                 <div className="text-center py-12">
-                    <p className="text-netflix-gray text-lg">No movies found</p>
+                    <p className="text-gray-200 text-lg">No movies found</p>
                 </div>
             ) : (
                 // شبكة عرض الأفلام
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 
-                        lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 
+                        lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {/* تكرار بطاقات الأفلام */}
                     {movies.map((movie) => (
                         <MovieCard key={movie.imdbID} movie={movie} />

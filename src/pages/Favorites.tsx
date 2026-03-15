@@ -4,6 +4,7 @@
 import React from 'react';
 import MovieList from '../components/MovieList';
 import { useMovieContext } from '../context/MovieContext';
+import { Link } from 'react-router-dom';
 
 const Favorites: React.FC = () => {
     // الحصول على حالة المفضلة من السياق
@@ -31,14 +32,14 @@ const Favorites: React.FC = () => {
                             Start adding movies to your list to see them here
                         </p>
                         {/* رابط للصفحة الرئيسية */}
-                        <a
-                            href="/"
+                        <Link
+                            to="/"
                             className="inline-block bg-netflix-red hover:bg-red-700 
                          text-white px-6 py-3 rounded-md font-medium 
                          transition-colors"
                         >
                             Browse Movies
-                        </a>
+                        </Link>
                     </div>
                 ) : (
                     // عرض قائمة المفضلة

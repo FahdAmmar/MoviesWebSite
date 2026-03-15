@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Movie } from '../types';
+import type { Movie } from '../types';
 import { useMovieContext } from '../context/MovieContext';
 
 interface MovieCardProps {
@@ -19,7 +19,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
 
     return (
         // بطاقة الفيلم
-        <div className="movie-card relative group bg-netflix-dark rounded-lg overflow-hidden">
+        <div className="movie-card relative group bg-dark rounded-lg overflow-hidden">
             {/* رابط لتفاصيل الفيلم */}
             <Link to={`/movie/${movie.imdbID}`} className="block">
                 {/* صورة الفيلم */}
@@ -33,7 +33,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                         />
                     ) : (
                         // صورة افتراضية في حالة عدم وجود بوستر
-                        <div className="w-full h-full bg-netflix-gray/20 flex items-center justify-center">
+                        <div className="w-full h-full bg-gray-200/20 flex items-center justify-center">
                             <span className="text-netflix-gray text-4xl">🎬</span>
                         </div>
                     )}
@@ -62,7 +62,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
             <button
                 onClick={() => toggleFavorite(movie)}
                 className="absolute top-3 right-3 p-2 bg-black/60 rounded-full 
-                   hover:bg-netflix-red transition-colors z-10"
+                   transition-colors z-10"
                 aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
             >
                 {/* أيقونة القلب */}

@@ -1,5 +1,6 @@
 
-import React, { useState, FormEvent, KeyboardEvent } from 'react';
+import { useState } from 'react';
+import type { FormEvent, KeyboardEvent } from 'react';
 import { useMovieContext } from '../context/MovieContext';
 import { Search } from 'lucide-react';
 // تعريف أنواع Props (للإمتداد المستقبلي)

@@ -1,5 +1,5 @@
 // تعريف الأنواع المستخدمة في المشروع
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 // نوع بيانات الفيلم من API
 export interface Movie {
     imdbID: string;

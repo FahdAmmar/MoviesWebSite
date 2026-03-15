@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useContext, useEffect, ReactNode, useRef } from 'react';
-import axios from 'axios'; // 1. استيراد Axios
-import { MovieState, MovieAction, MovieContextType, Movie, MovieDetails, MovieProviderProps } from '../types';
+import axios from 'axios';
+import type { MovieState, MovieAction, MovieContextType, Movie, MovieDetails, MovieProviderProps } from '../types';
 
 // مفتاح API من متغير البيئة (Vite)
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
@@ -83,10 +83,10 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
             // Axios يرجع البيانات في خاصية data مباشرة
             const response = await axios.get(
                 `https://www.omdbapi.com/`, {
-                    params: {
-                        s: query,
-                        apikey: API_KEY
-                    },
+                params: {
+                    s: query,
+                    apikey: API_KEY
+                },
                 signal: abortControllerRef.current.signal // تمرير إشارة الإلغاء
             }
             );
