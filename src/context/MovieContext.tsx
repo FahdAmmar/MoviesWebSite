@@ -1,5 +1,13 @@
 import React, { createContext, useReducer, useContext, useEffect, ReactNode, useRef } from 'react';
-import { MovieState, MovieAction, MovieContextType, Movie, MovieDetails } from '../types';
+import axios from 'axios'; // 1. استيراد Axios
+import { MovieState, MovieAction, MovieContextType, Movie, MovieDetails, MovieProviderProps } from '../types';
+
+// مفتاح API من متغير البيئة (Vite)
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
+
+if (!API_KEY) {
+    throw new Error("OMDB API key is missing");
+}
 
 const initialState: MovieState = {
     movies: [],
@@ -41,12 +49,9 @@ const movieReducer = (state: MovieState, action: MovieAction): MovieState => {
 
 const MovieContext = createContext<MovieContextType | undefined>(undefined);
 
-interface MovieProviderProps {
-    children: ReactNode;
-}
-
 export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
     const [state, dispatch] = useReducer(movieReducer, initialState);
+    // نحتفظ بالـ AbortController لأن Axios يدعمه لإلغاء الطلبات
     const abortControllerRef = useRef<AbortController | null>(null);
 
     // تحميل المفضلة من localStorage عند بدء التطبيق
@@ -62,9 +67,6 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
         }
     }, []);
 
-    // مفتاح API من متغير البيئة (Vite)
-    const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
-
     const searchMovies = async (query: string) => {
         // إلغاء أي طلب سابق
         if (abortControllerRef.current) {
@@ -77,24 +79,33 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
         dispatch({ type: 'SET_SEARCH_QUERY', payload: query });
 
         try {
-            const response = await fetch(
-                `https://www.omdbapi.com/?s=${encodeURIComponent(query)}&apikey=${API_KEY}`,
-                { signal: abortControllerRef.current.signal }
+            // 2. استخدام Axios بدلاً من fetch
+            // Axios يرجع البيانات في خاصية data مباشرة
+            const response = await axios.get(
+                `https://www.omdbapi.com/`, {
+                    params: {
+                        s: query,
+                        apikey: API_KEY
+                    },
+                signal: abortControllerRef.current.signal // تمرير إشارة الإلغاء
+            }
             );
 
-            const data = await response.json();
+            const data = response.data; // البيانات هنا جاهزة ولا تحتاج لـ .json()
 
             if (data.Response === 'False') {
-                dispatch({ type: 'SET_ERROR', payload: data.Error || 'لا توجد نتائج' });
+                dispatch({ type: 'SET_ERROR', payload: data.Error || 'No results found' });
                 dispatch({ type: 'SET_MOVIES', payload: [] });
             } else {
-                // التأكد من أن data.Search هي مصفوفة
                 const movies = Array.isArray(data.Search) ? data.Search : [];
                 dispatch({ type: 'SET_MOVIES', payload: movies });
             }
         } catch (error: any) {
-            if (error.name !== 'AbortError') {
-                dispatch({ type: 'SET_ERROR', payload: 'حدث خطأ في الاتصال بالخادم' });
+            // 3. التحقق من خطأ الإلغاء باستخدام دالة Axios الخاصة
+            if (axios.isCancel(error)) {
+                console.log('Request canceled:', error.message);
+            } else {
+                dispatch({ type: 'SET_ERROR', payload: 'An error occurred while connecting to the server.' });
             }
         } finally {
             dispatch({ type: 'SET_LOADING', payload: false });
@@ -110,16 +121,26 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
         dispatch({ type: 'SET_LOADING', payload: true });
 
         try {
-            const response = await fetch(
-                `https://www.omdbapi.com/?i=${imdbID}&plot=full&apikey=${API_KEY}`,
-                { signal: abortControllerRef.current.signal }
+            // 4. استخدام Axios
+            const response = await axios.get(
+                `https://www.omdbapi.com/`,
+                {
+                    params: {
+                        i: imdbID,
+                        plot: 'full',
+                        apikey: API_KEY
+                    },
+                    signal: abortControllerRef.current.signal
+                }
             );
 
-            const data: MovieDetails = await response.json();
+            const data: MovieDetails = response.data;
             dispatch({ type: 'SET_SELECTED_MOVIE', payload: data });
         } catch (error: any) {
-            if (error.name !== 'AbortError') {
-                dispatch({ type: 'SET_ERROR', payload: 'حدث خطأ في تحميل التفاصيل' });
+            if (axios.isCancel(error)) {
+                console.log('Request canceled:', error.message);
+            } else {
+                dispatch({ type: 'SET_ERROR', payload: 'An error occurred in loading the details.' });
             }
         } finally {
             dispatch({ type: 'SET_LOADING', payload: false });

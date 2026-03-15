@@ -1,5 +1,5 @@
 // تعريف الأنواع المستخدمة في المشروع
-
+import { ReactNode } from "react";
 // نوع بيانات الفيلم من API
 export interface Movie {
     imdbID: string;
@@ -60,4 +60,7 @@ export interface MovieContextType {
     getMovieDetails: (imdbID: string) => Promise<void>;
     toggleFavorite: (movie: Movie) => void;
     isFavorite: (imdbID: string) => boolean;
+}
+export interface MovieProviderProps {
+    children: ReactNode;
 }
