@@ -1,30 +1,26 @@
-// صفحة الرئيسية
-// تعرض شريط البحث وقائمة الأفلام
-
 import React, { useEffect } from 'react';
 import SearchBar from '../components/SearchBar';
 import MovieList from '../components/MovieList';
-import { useMovieContext } from '../context/MovieContext';
+import SkeletonLoader from '../components/SkeletonLoader';
+import { useMovieStore } from '../store/useMovieStore';
 
 const Home: React.FC = () => {
-    // الحصول على الحالة والدوال من السياق
-    const { state, searchMovies } = useMovieContext();
+    const movies = useMovieStore((state) => state.movies);
+    const loading = useMovieStore((state) => state.loading);
+    const error = useMovieStore((state) => state.error);
+    const searchMovies = useMovieStore((state) => state.searchMovies);
 
-    // البحث عن أفلام افتراضية عند تحميل الصفحة
     useEffect(() => {
-        // البحث عن كلمة "dark" كافتراضي
         searchMovies('dark');
-    }, []);
+    }, [searchMovies]);
 
     return (
-        <div className="min-h-screen min-w-screen  pt-15 mx-auto">
-
+        <div className="min-h-screen pt-15 mx-auto">
             <section className="relative h-[60vh] bg-linear-to-b from-red-800/20 to-black w-full">
-
-                <div className="container mx-auto px-4 h-full w-full flex items-center justify-center">
+                <div className="container mx-auto px-4 h-full flex items-center justify-center">
                     <div className="text-center z-10">
                         <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">
-                            Welcome to Netflix
+                            Welcome to FILMIX
                         </h1>
                         <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
                             Discover thousands of movies and TV shows. Search for your favorites
@@ -34,30 +30,19 @@ const Home: React.FC = () => {
                 </div>
             </section>
 
-            {/* قسم البحث */}
-            <section className="container mx-auto min-w-screen  px-4 py-8">
+            <section className="container mx-auto px-4 py-8">
                 <SearchBar />
 
-                {/* عرض حالة التحميل */}
-                {state.loading && (
+                {loading && <SkeletonLoader />}
+
+                {error && !loading && (
                     <div className="text-center py-12">
-                        <div className="loading  text-2xl">Loading...</div>
+                        <p className="text-red-500 text-lg">{error}</p>
                     </div>
                 )}
 
-                {/* عرض رسالة الخطأ */}
-                {state.error && !state.loading && (
-                    <div className="text-center py-12">
-                        <p className="text-red-500 text-lg">{state.error}</p>
-                    </div>
-                )}
-
-                {/* عرض قائمة الأفلام */}
-                {!state.loading && !state.error && (
-                    <MovieList
-                        movies={state.movies}
-                        title={`Results (${state.movies.length})`}
-                    />
+                {!loading && !error && (
+                    <MovieList movies={movies} title={`Results (${movies.length})`} />
                 )}
             </section>
         </div>

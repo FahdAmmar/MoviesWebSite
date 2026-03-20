@@ -1,55 +1,72 @@
 @import "tailwindcss";
 
 html{
-    scroll-behavior: smooth;
-        overflow-x: hidden;
-
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 *{
   box-sizing: border-box;
 }
 
-body {
+body{
   background-color: #141414;
   color: #ffffff;
   font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
+/* لون netflix-red للاستخدام في Tailwind */
+.netflix-red{
+  color: #E50914;
+}
+.bg-netflix-red {
+  background-color: #E50914;
+}
+.border-netflix-red{
+  border-color: #E50914;
+}
+.fill-netflix-red{
+  fill: #E50914;
+}
+
 /* تنسيق شريط التمرير */
-::-webkit-scrollbar {
+::-webkit-scrollbar{
   width: 8px;
 }
-
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-track{
   background: #141414;
 }
-
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb{
   background: #E50914;
   border-radius: 4px;
 }
 
 /* تأثيرات Hover للبطاقات */
-.movie-card {
+.movie-card{
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-.movie-card:hover {
+.movie-card:hover{
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
 }
 
 /* تأثير التحميل */
-.loading {
+.loading{
   animation: pulse 1.5s infinite;
 }
-
-@keyframes pulse {
+@keyframes pulse{
   0%, 100% {
     opacity: 1;
   }
   50% {
     opacity: 0.5;
   }
+}
+
+/* تأثير عند النقر على القلب */
+.heart-btn{
+  transition: transform 0.2s ease;
+}
+.heart-btn:active{
+  transform: scale(0.9);
 }

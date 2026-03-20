@@ -1,37 +1,27 @@
-// المكون الرئيسي للتطبيق
-// يحتوي على إعدادات التوجيه والروتات
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { MovieProvider } from './context/MovieContext';
-import Header from './components/Header';
-import Footer from './components/Footer';
 import Home from './pages/Home';
 import Favorites from './pages/Favorites';
 import MovieDetails from './pages/MovieDetails';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
-const App: React.FC = () => {
+function App() {
   return (
-    <MovieProvider>
-      <Router>
-        <div className="min-h-screen min-w-screen bg-black ">
-          <Header />
-
-          <main  >
-            <Routes>
-              <Route path="/" element={<Home />} />
-
-              <Route path="/favorites" element={<Favorites />} />
-
-              <Route path="/movie/:imdbID" element={<MovieDetails />} />
-            </Routes>
-            <Footer />
-          </main>
-
-        </div>
-      </Router>
-    </MovieProvider>
+    <Router>
+      <div className="flex flex-col min-h-screen bg-black">
+        <Header />
+        <main className="grow pt-16">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/movie/:imdbID" element={<MovieDetails />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
-};
+}
 
 export default App;

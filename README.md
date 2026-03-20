@@ -1,5 +1,3 @@
-
-
 # 🎬 Netflix Clone
 
 A modern movie discovery web application inspired by Netflix. Built with **React 19**, **TypeScript**, and **Vite**, it allows users to search for movies, view details, and save favorites – all powered by the **OMDB API**.
@@ -8,42 +6,73 @@ A modern movie discovery web application inspired by Netflix. Built with **React
 
 <img align="center" src="./public//H.png" width='1000px' height='400px'/>
 
-
-
-
+---
 
 ## 🚀 Technologies Used
 
 | Icon                                                                                                                           | Technology               | Description                              |
 |--------------------------------------------------------------------------------------------------------------------------------|--------------------------|------------------------------------------|
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="24" height="24" />               | **React 19**             | JavaScript library for building UIs      |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="24" height="24" />               | **React 19**             | JavaScript library for building UIs      |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" width="24" height="24" />             | **Vite**                 | Next‑generation frontend tooling         |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="24" height="24" />     | **TypeScript**           | Typed JavaScript at scale                 |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" width="24" height="24" />      | **TailwindCSS**          | Utility‑first CSS framework               |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/reactrouter/reactrouter-original.svg" width="24" height="24" />   | **React Router DOM**     | Declarative routing for React            |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="24" height="24" />               | **Context API + useReducer** | Lightweight state management          |
+| <img src="https://zustand-demo.pmnd.rs/favicon.ico" width="24" height="24" />                                                  | **Zustand**              | Lightweight state management             |
 | <img src="https://img.icons8.com/ios-filled/50/000000/film-reel.png" width="24" height="24" />                                 | **OMDB API**             | Movie data source                        |
 
 ---
 
+## 🔄 State Management Migration
+
+> **Updated:** This project has been migrated from **Context API + useReducer** to **Zustand** for better state management.
+
+| Feature | Context API + useReducer | Zustand ✅ |
+|---------|-------------------------|------------|
+| **Boilerplate** | High (Provider, Reducer, Actions) | Minimal (Single store file) |
+| **Performance** | Re-renders all consumers on change | Selective subscriptions |
+| **TypeScript** | Complex typing | Native & simple typing |
+| **DevTools** | Requires setup | Built-in support |
+| **Code Lines** | ~100+ lines | ~30 lines |
+
+### Why Zustand?
+
+```bash
+# Before (Context API)
+<MovieProvider>
+  <App />
+</MovieProvider>
+
+# After (Zustand)
+// Direct import - No provider needed!
+const { favorites } = useMovieStore();
+```
+
+**Benefits:**
+- 🎯 **Less Boilerplate** – No need for providers or context wrappers
+- ⚡ **Better Performance** – Components only re-render when subscribed state changes
+- 🧩 **Easier Testing** – Store can be imported and tested independently
+- 🔌 **DevTools Ready** – Works out of the box with Redux DevTools
+
+---
 
 ## ✨ Features
 
 - 🔍 **Search Movies** – Find any movie by title using the OMDB API  
 - 📄 **Movie Details** – View full information (plot, cast, ratings, etc.)  
-- ❤️ **Favorites** – Add/remove movies to a personal favorites list (persisted in context)  
+- ❤️ **Favorites** – Add/remove movies to a personal favorites list (persisted in localStorage)  
 - 🎨 **Responsive UI** – Styled with TailwindCSS for a smooth experience on all devices  
 - ⚡ **Fast Development** – Powered by Vite for instant HMR and builds  
 - 🧭 **Client‑side Routing** – Navigate seamlessly with React Router DOM  
 
 ---
+
 ## 📦 Installation & Setup
 
 Follow these steps to get the project running on your local machine.
 
 1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/FahdAmmar/MoviesWebSite
+   git clone https://github.com/FahdAmmar/MoviesWebSite  
    ```
 
 2. **Install Dependencies**  
@@ -76,6 +105,8 @@ npm run build
 npm run preview   # Serve the production build locally
 ```
 
+---
+
 ## 📁 Project Structure
 
 ```
@@ -90,8 +121,8 @@ npm run preview   # Serve the production build locally
 │   │   ├── 📄 MovieCard.tsx
 │   │   ├── 📄 MovieList.tsx
 │   │   └── 📄 SearchBar.tsx
-│   ├── 📁 context
-│   │   └── 📄 MovieContext.tsx
+│   ├── 📁 store              # 🆕 Zustand Store
+│   │   └── 📄 useMovieStore.ts
 │   ├── 📁 pages
 │   │   ├── 📄 Favorites.tsx
 │   │   ├── 📄 Home.tsx
@@ -113,6 +144,9 @@ npm run preview   # Serve the production build locally
 └── 📄 vite.config.ts
 ```
 
+> **Note:** The `context/` folder has been replaced with `store/` for Zustand implementation.
+
+---
 
 ## 🎯 How to Use
 
@@ -127,7 +161,8 @@ npm run preview   # Serve the production build locally
 
 - [OMDB API](http://www.omdbapi.com/) for providing movie data  
 - [TailwindCSS](https://tailwindcss.com/) for the amazing utility classes  
-- [React](https://reactjs.org/) and the open‑source community
+- [React](https://reactjs.org/) and the open‑source community  
+- [Zustand](https://github.com/pmndrs/zustand) for the delightful state management  
 
 ---
 
@@ -137,4 +172,18 @@ This project is [MIT](LICENSE) licensed.
 
 ---
 
-Enjoy exploring movies! 🍿
+**Enjoy exploring movies!** 🍿
+
+---
+
+### 📊 Migration Summary
+
+| Aspect | Before | After |
+|--------|--------|-------|
+| State Management | Context API + useReducer | Zustand |
+| Store Location | `src/context/MovieContext.tsx` | `src/store/useMovieStore.ts` |
+| Provider Required | ✅ Yes | ❌ No |
+| Lines of Code | ~120 | ~40 |
+| Re-renders | All consumers | Subscribed components only |
+
+---
