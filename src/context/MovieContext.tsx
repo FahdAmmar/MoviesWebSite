@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext, useEffect, ReactNode, useRef } from 'react';
+import React, { createContext, useReducer, useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import type { MovieState, MovieAction, MovieContextType, Movie, MovieDetails, MovieProviderProps } from '../types';
 

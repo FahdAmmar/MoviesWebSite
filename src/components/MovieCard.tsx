@@ -1,11 +1,8 @@
-// مكون بطاقة الفيلم
-// يعرض معلومات الفيلم مع إمكانية الإضافة للمفضلة
 
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Movie } from '../types';
 import { useMovieContext } from '../context/MovieContext';
-
 interface MovieCardProps {
     movie: Movie;
 }

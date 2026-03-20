@@ -1,5 +1,3 @@
-// صفحة تفاصيل الفيلم
-// تعرض معلومات مفصلة عن الفيلم المحدد
 
 import React, { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
