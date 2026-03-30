@@ -10,7 +10,7 @@ const MAX_FAVORITES = 10; // Define your application's limit
 // --- Animation Variants ---
 const containerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
     exit: { opacity: 0, y: -20 }
 };
 
