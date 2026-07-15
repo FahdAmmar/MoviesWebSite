@@ -14,7 +14,7 @@ import { OMDB_BASE_URL } from '../constants';
 // يجب أبداً كتابته مباشرة داخل الكود المصدري، حتى لا يظهر في
 // أي مستودع عام أو يُستخرج بسهولة من حزمة الإنتاج المبنية.
 // راجع ملف .env.example لمعرفة كيفية تجهيزه محلياً.
-const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY || '68f0f041';
 
 /**
  * رسالة الخطأ المعروضة عند عدم توفر مفتاح API على الإطلاق.
