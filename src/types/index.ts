@@ -1,6 +1,15 @@
-// تعريف الأنواع المستخدمة في المشروع
-import type { ReactNode } from "react";
-// نوع بيانات الفيلم من API
+// =============================================================
+// تعريف الأنواع (Types) المستخدمة في المشروع
+// =============================================================
+// ملاحظة: كانت هذه الملفات تحتوي سابقاً على أنواع خاصة بتطبيق
+// كان يعتمد على Context API + useReducer (MovieState, MovieAction,
+// MovieContextType, MovieProviderProps). بعد الانتقال إلى Zustand
+// (انظر src/store/useMovieStore.ts) لم تعد هذه الأنواع مستخدمة في
+// أي مكان بالمشروع، لذلك تمت إزالتها هنا (كود ميت / Dead Code)
+// حفاظاً على وضوح الكود وسهولة صيانته.
+// =============================================================
+
+/** نوع بيانات الفيلم الأساسي كما تُعيده نتائج البحث من OMDb API */
 export interface Movie {
     imdbID: string;
     Title: string;
@@ -9,7 +18,7 @@ export interface Movie {
     Poster: string;
 }
 
-// نوع بيانات تفاصيل الفيلم
+/** نوع بيانات تفاصيل الفيلم الكاملة (صفحة تفاصيل الفيلم) */
 export interface MovieDetails extends Movie {
     Rated?: string;
     Released?: string;
@@ -31,36 +40,23 @@ export interface MovieDetails extends Movie {
     imdbVotes?: string;
 }
 
-// نوع حالة التطبيق
-export interface MovieState {
-    movies: Movie[];
-    favorites: Movie[];
-    searchQuery: string;
-    loading: boolean;
-    error: string | null;
-    selectedMovie: MovieDetails | null;
+// =============================================================
+// أنواع استجابة OMDb API الخام (قبل التأكد من نجاح الطلب)
+// تُستخدم هذه الأنواع في طبقة الـ store للتحقق الآمن من نوع
+// الاستجابة القادمة من الشبكة بدلاً من التعامل معها كـ `any`
+// =============================================================
+
+/** الشكل المشترك بين كل استجابات OMDb (حقل النجاح/الفشل) */
+interface OmdbBaseResponse {
+    Response: 'True' | 'False';
+    Error?: string;
 }
 
-// نوع الإجراءات المتاحة
-export type MovieAction =
-    | { type: 'SET_MOVIES'; payload: Movie[] }
-    | { type: 'SET_SEARCH_QUERY'; payload: string }
-    | { type: 'SET_LOADING'; payload: boolean }
-    | { type: 'SET_ERROR'; payload: string | null }
-    | { type: 'ADD_FAVORITE'; payload: Movie }
-    | { type: 'REMOVE_FAVORITE'; payload: string }
-    | { type: 'SET_SELECTED_MOVIE'; payload: MovieDetails | null }
-    | { type: 'LOAD_FAVORITES'; payload: Movie[] };
+/** استجابة نقطة البحث (s=) في OMDb API */
+export interface OmdbSearchResponse extends OmdbBaseResponse {
+    Search?: Movie[];
+    totalResults?: string;
+}
 
-// نوع سياق الأفلام
-export interface MovieContextType {
-    state: MovieState;
-    dispatch: React.Dispatch<MovieAction>;
-    searchMovies: (query: string) => Promise<void>;
-    getMovieDetails: (imdbID: string) => Promise<void>;
-    toggleFavorite: (movie: Movie) => void;
-    isFavorite: (imdbID: string) => boolean;
-}
-export interface MovieProviderProps {
-    children: ReactNode;
-}
+/** استجابة نقطة تفاصيل الفيلم (i=) في OMDb API */
+export type OmdbDetailsResponse = OmdbBaseResponse & Partial<MovieDetails>;

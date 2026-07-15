@@ -2,9 +2,11 @@ import React from 'react';
 import MovieList from '../components/MovieList';
 import { useMovieStore } from '../store/useMovieStore';
 import { Link } from 'react-router-dom';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const Favorites: React.FC = () => {
     const favorites = useMovieStore((state) => state.favorites);
+    useDocumentTitle('My List');
 
     return (
         <div className="min-h-screen pt-20">

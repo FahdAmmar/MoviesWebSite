@@ -21,8 +21,10 @@ const MovieList: React.FC<MovieListProps> = ({ movies, title }) => {
 
             {/* عرض رسالة عند عدم وجود أفلام */}
             {movies.length === 0 ? (
-                <div className="text-center py-12">
-                    <p className="text-gray-200 text-lg">No movies found</p>
+                <div className="text-center py-16">
+                    <div className="text-5xl mb-4" aria-hidden="true">🔍</div>
+                    <p className="text-white text-lg font-medium mb-1">No movies found</p>
+                    <p className="text-netflix-gray text-sm">Try a different title or keyword.</p>
                 </div>
             ) : (
                 // شبكة عرض الأفلام

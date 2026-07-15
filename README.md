@@ -1,4 +1,4 @@
-# 🎬 Netflix Clone
+# 🎬 FILMIX
 
 A modern movie discovery web application inspired by Netflix. Built with **React 19**, **TypeScript**, and **Vite**, it allows users to search for movies, view details, and save favorites – all powered by the **OMDB API**.
 
@@ -83,7 +83,7 @@ Follow these steps to get the project running on your local machine.
 3. **🔑 Configure API Key (Important)**  
    This project uses the OMDB API to fetch movie data. You need a valid API key for the app to work.
    - **Get your Key**: Visit [OMDB API Website](http://www.omdbapi.com/apikey.aspx) and request a free API key (it usually arrives via email).
-   - **Create Environment File**: Create a new file named `.env` in the root directory of the project (where `package.json` is located).
+   - **Create Environment File**: Copy `.env.example` to a new file named `.env` in the root directory of the project (where `package.json` is located).
    - **Add the Variable**: Paste the following line into your `.env` file, replacing `your_api_key_here` with the key you received:
      ```
      VITE_OMDB_API_KEY=your_api_key_here
@@ -111,36 +111,41 @@ npm run preview   # Serve the production build locally
 
 ```
 ├── 📁 public
-│   ├── 🖼️ H.png
-│   └── 🖼️ vite.svg
+│   └── 🖼️ H.png
 ├── 📁 src
-│   ├── 📁 assets
 │   ├── 📁 components
 │   │   ├── 📄 Footer.tsx
 │   │   ├── 📄 Header.tsx
 │   │   ├── 📄 MovieCard.tsx
 │   │   ├── 📄 MovieList.tsx
-│   │   └── 📄 SearchBar.tsx
-│   ├── 📁 store              # 🆕 Zustand Store
+│   │   ├── 📄 SearchBar.tsx
+│   │   └── 📄 SkeletonLoader.tsx
+│   ├── 📁 constants           # 🆕 Shared constants (MAX_FAVORITES, etc.)
+│   │   └── 📄 index.ts
+│   ├── 📁 hooks               # 🆕 Reusable hooks
+│   │   └── 📄 useDocumentTitle.ts
+│   ├── 📁 store               # Zustand Store
 │   │   └── 📄 useMovieStore.ts
 │   ├── 📁 pages
 │   │   ├── 📄 Favorites.tsx
 │   │   ├── 📄 Home.tsx
-│   │   └── 📄 MovieDetails.tsx
+│   │   ├── 📄 MovieDetails.tsx
+│   │   └── 📄 NotFound.tsx
 │   ├── 📁 types
 │   │   └── 📄 index.ts
 │   ├── 📄 App.tsx
 │   ├── 📄 env.d.ts
 │   ├── 📄 global.d.ts
 │   ├── 🎨 index.css
-│   ├── 📄 main.tsx
-│   └── ⚙️ tsconfig.json
+│   └── 📄 main.tsx
+├── ⚙️ .env.example
 ├── ⚙️ .gitignore
 ├── 📝 README.md
 ├── 📄 eslint.config.js
 ├── 🌐 index.html
 ├── ⚙️ package-lock.json
 ├── ⚙️ package.json
+├── ⚙️ tsconfig.json
 └── 📄 vite.config.ts
 ```
 
@@ -168,7 +173,7 @@ npm run preview   # Serve the production build locally
 
 ## 📄 License
 
-This project is [MIT](LICENSE) licensed.
+This project is licensed under the MIT License.
 
 ---
 

@@ -8,9 +8,18 @@ const Header: React.FC = () => {
     const location = useLocation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    useEffect(() => {
+    // إغلاق القائمة الجانبية تلقائياً عند تغيّر المسار (التنقّل)
+    // ملاحظة: تم استبدال النمط القديم (استدعاء setState داخل useEffect
+    // يعتمد على location.pathname) بنمط "تعديل الحالة أثناء العرض"
+    // الموصى به رسمياً في توثيق React لإعادة ضبط الحالة عند تغيّر قيمة
+    // خارجية. هذا يتجنّب "الريندر المتتالي" (Cascading Renders) الذي
+    // كانت تسببه الطريقة القديمة، وهو ما رصدته أداة الفحص الثابت
+    // (ESLint) عبر قاعدة react-hooks/set-state-in-effect
+    const [prevPathname, setPrevPathname] = useState(location.pathname);
+    if (location.pathname !== prevPathname) {
+        setPrevPathname(location.pathname);
         setIsMobileMenuOpen(false);
-    }, [location.pathname]);
+    }
 
     useEffect(() => {
         document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'unset';
@@ -26,7 +35,7 @@ const Header: React.FC = () => {
 
     return (
         <>
-            <header className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-md border-b border-white/10">
+            <header className="fixed top-0 left-0 right-0 z-50 w-full bg-netflix-black/70 backdrop-blur-md border-b border-white/10">
                 <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2 group">
                         <div className="relative p-1.5 rounded-lg bg-linear-to-br from-rose-500/20 to-orange-500/20 group-hover:from-rose-500/30 group-hover:to-orange-500/30 transition-all duration-300">
@@ -45,7 +54,8 @@ const Header: React.FC = () => {
                                 <Link
                                     key={link.to}
                                     to={link.to}
-                                    className={`relative flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg`}
+                                    className={`group relative flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg ${isActive ? 'text-white' : 'text-netflix-gray hover:text-white'
+                                        }`}
                                 >
                                     <Icon
                                         size={16}

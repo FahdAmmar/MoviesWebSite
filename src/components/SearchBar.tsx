@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import type { FormEvent, KeyboardEvent } from 'react';
 import { useMovieStore } from '../store/useMovieStore';
-import { Search } from 'lucide-react';
+import { Search, X, Loader2 } from 'lucide-react';
 
-interface SearchBarProps {
-    onSearch?: (query: string) => void;
-}
-
-const SearchBar: React.FC<SearchBarProps> = () => {
+// ملاحظة: تمت إزالة الخاصية onSearch التي كانت معرّفة سابقاً في هذا
+// المكوّن لكنها لم تكن مستخدمة في أي مكان (لا يتم استدعاؤها داخلياً،
+// ولا يمرّرها أي مكوّن أب) — كود ميت تمت إزالته لتوضيح الواجهة الفعلية
+const SearchBar: React.FC = () => {
     const [searchText, setSearchText] = useState('');
     const searchMovies = useMovieStore((state) => state.searchMovies);
     const searchQuery = useMovieStore((state) => state.searchQuery);
+    const loading = useMovieStore((state) => state.loading);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -26,48 +26,68 @@ const SearchBar: React.FC<SearchBarProps> = () => {
         }
     };
 
+    const handleClear = () => {
+        setSearchText('');
+    };
+
     return (
-        <div className="min-w-screen mx-auto mb-10 py-10">
+        // حاوية مرنة تمتد بعرض العنصر الأب بدلاً من عرض ثابت (w-96) كان
+        // يسبب مشاكل استجابة على الشاشات الصغيرة
+        <div className="w-full mx-auto mb-10">
             <form
                 onSubmit={handleSubmit}
                 role="search"
                 aria-label="Movie search"
                 className="flex justify-center"
             >
-                <div className="relative w-96">
+                <div className="relative w-full max-w-xl">
                     <button
                         type="submit"
-                        aria-label="Search button"
-                        className="absolute left-1 top-1/2 -translate-y-1/2 z-10 
-              bg-netflix-red hover:bg-red-700 text-white 
-              px-4 py-2 rounded-md font-medium 
-              transition-colors duration-200 text-base"
+                        disabled={loading}
+                        aria-label="Search"
+                        className="absolute left-1.5 top-1/2 -translate-y-1/2 z-10
+              bg-netflix-red hover:bg-netflix-red-dark disabled:opacity-60 text-white
+              p-2 rounded-lg font-medium
+              transition-colors duration-200"
                     >
-                        <Search />
+                        {loading ? <Loader2 size={20} className="animate-spin" /> : <Search size={20} />}
                     </button>
                     <input
                         type="search"
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="search"
-                        className="indent-0 md:indent-6
-              w-3/4 md:w-full h-10 
-              pl-15 pr-4
-              border border-gray-300/30 
-              rounded-lg text-white 
-              placeholder-gray-400
-              focus:outline-none focus:border-red-600 
-              transition-colors text-lg"
+                        placeholder="Search for a movie or show..."
+                        className="w-full h-12
+              pl-14 pr-10
+              bg-white/5
+              border border-white/15
+              rounded-xl text-white
+              placeholder-gray-500
+              focus:outline-none focus:border-netflix-red focus:ring-2 focus:ring-netflix-red/20
+              transition-colors text-base"
                         aria-label="Search input"
                     />
+                    {searchText && (
+                        <button
+                            type="button"
+                            onClick={handleClear}
+                            aria-label="Clear search"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                        >
+                            <X size={18} />
+                        </button>
+                    )}
                 </div>
             </form>
-            {searchQuery && searchText && (
-                <p className="text-netflix-gray text-sm mt-10 text-center">
-                    Results for: <span className="text-white">{searchQuery}</span>
-                </p>
-            )}
+            {/* aria-live تُعلم قارئ الشاشة بتحديث نتيجة البحث دون الحاجة لإعادة التركيز */}
+            <p aria-live="polite" className="text-netflix-gray text-sm mt-4 text-center min-h-[1.25rem]">
+                {searchQuery && (
+                    <>
+                        Results for: <span className="text-white">{searchQuery}</span>
+                    </>
+                )}
+            </p>
         </div>
     );
 };

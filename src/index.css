@@ -1,60 +1,98 @@
 @import "tailwindcss";
 
-html{
+/* =============================================================
+   نظام التصميم (Design Tokens) — Tailwind CSS v4
+   =============================================================
+   تسجيل هذه المتغيرات داخل @theme يجعل Tailwind يولّد تلقائياً كل
+   الأصناف المرتبطة بها (bg-*, text-*, border-*, fill-*, from-*,
+   via-*, to-*) بما في ذلك دعم الشفافية (مثال: bg-netflix-red/20).
+   هذا يحل مشكلة كانت موجودة سابقاً حيث عُرّفت ألوان مثل
+   netflix-gray و netflix-black و dark كأصناف CSS يدوية غير مكتملة
+   (بعضها لم يكن معرّفاً إطلاقاً)، فكانت النصوص والخلفيات التي
+   تعتمد عليها تُعرض بلا تنسيق في عدة صفحات (Favorites, MovieDetails,
+   SearchBar). تعريفها هنا كـ tokens حقيقية يصلح كل الاستخدامات
+   دفعة واحدة دون الحاجة لتعديل كل ملف على حدة.
+   ============================================================= */
+@theme {
+  /* العلامة التجارية: أحمر نتفليكس المميز */
+  --color-netflix-red: #e50914;
+  --color-netflix-red-dark: #b20710;
+
+  /* أسطح داكنة سينمائية (خلفية الصفحة / لوحات مرتفعة) */
+  --color-netflix-black: #0a0a0a;
+  --color-dark: #141414;
+  --color-surface: #1a1a1a;
+
+  /* لون نص ثانوي (عناوين فرعية، أوصاف، بيانات وصفية) */
+  --color-netflix-gray: #9ca3af;
+
+  /* ألوان دلالية لرسائل الحالة (نجاح / تحذير / خطأ / معلومة) */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* خط عصري وواضح للقراءة في الوضع الداكن */
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+html {
   scroll-behavior: smooth;
   overflow-x: hidden;
 }
 
-*{
+* {
   box-sizing: border-box;
 }
 
-body{
-  background-color: #141414;
+body {
+  background-color: var(--color-dark);
   color: #ffffff;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-sans);
 }
 
-/* لون netflix-red للاستخدام في Tailwind */
-.netflix-red{
-  color: #E50914;
-}
-.bg-netflix-red {
-  background-color: #E50914;
-}
-.border-netflix-red{
-  border-color: #E50914;
-}
-.fill-netflix-red{
-  fill: #E50914;
+/* =============================================================
+   تنسيق مؤشرات التركيز (Focus) لإتاحة الوصول عبر لوحة المفاتيح
+   =============================================================
+   بعض العناصر التفاعلية تُلغي outline الافتراضي (focus:outline-none)
+   دون بديل واضح دائماً؛ هذه القاعدة تضمن وجود مؤشر تركيز واضح
+   ومتناسق مع هوية التطبيق عند التنقل بلوحة المفاتيح فقط
+   (لا تظهر عند النقر بالماوس بفضل :focus-visible) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-netflix-red);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* تنسيق شريط التمرير */
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   width: 8px;
 }
-::-webkit-scrollbar-track{
-  background: #141414;
+::-webkit-scrollbar-track {
+  background: var(--color-dark);
 }
-::-webkit-scrollbar-thumb{
-  background: #E50914;
+::-webkit-scrollbar-thumb {
+  background: var(--color-netflix-red);
   border-radius: 4px;
 }
 
 /* تأثيرات Hover للبطاقات */
-.movie-card{
+.movie-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.movie-card:hover{
+.movie-card:hover {
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
 }
 
 /* تأثير التحميل */
-.loading{
+.loading {
   animation: pulse 1.5s infinite;
 }
-@keyframes pulse{
+@keyframes pulse {
   0%, 100% {
     opacity: 1;
   }
@@ -64,16 +102,26 @@ body{
 }
 
 /* تأثير عند النقر على القلب */
-.heart-btn{
+.heart-btn {
   transition: transform 0.2s ease;
 }
-.heart-btn:active{
+.heart-btn:active {
   transform: scale(0.9);
 }
 @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 .animate-shimmer {
-    animation: shimmer 1.5s infinite;
+  animation: shimmer 1.5s infinite;
+}
+
+/* احترام تفضيل المستخدم بتقليل الحركة (إتاحة الوصول) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

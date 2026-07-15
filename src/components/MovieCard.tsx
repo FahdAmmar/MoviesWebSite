@@ -1,11 +1,9 @@
-import React, { useState, memo, useCallback, useEffect } from 'react';
+import React, { useState, useId, memo, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMovieStore } from '../store/useMovieStore';
 import type { Movie } from '../types';
-
-// --- Constants ---
-const MAX_FAVORITES = 10; // Consistent with MovieDetails logic
+import { MAX_FAVORITES } from '../constants';
 
 interface MovieCardProps {
     movie: Movie;
@@ -26,6 +24,12 @@ const MovieCard: React.FC<MovieCardProps> = memo(({ movie, index = 0 }) => {
     const [shouldShake, setShouldShake] = useState(false);
 
     const favorite = isFavorite(movie.imdbID);
+
+    // معرّف فريد لكل بطاقة لتفادي تكرار نفس id الخاص بتدرّج القلب
+    // (linearGradient) عبر عشرات البطاقات المعروضة في نفس الصفحة،
+    // وهو أمر غير صالح في HTML/SVG ويجعل السلوك عرضة للأخطاء بين المتصفحات
+    const uniqueId = useId();
+    const gradientId = `cardHeartGradient-${uniqueId}`;
 
     // --- Clear Error Message after delay ---
     useEffect(() => {
@@ -201,7 +205,7 @@ const MovieCard: React.FC<MovieCardProps> = memo(({ movie, index = 0 }) => {
                         } : { scale: 1 }}
                     >
                         <defs>
-                            <linearGradient id="cardHeartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stopColor="#ff4b4b" />
                                 <stop offset="100%" stopColor="#ff0055" />
                             </linearGradient>
@@ -211,7 +215,7 @@ const MovieCard: React.FC<MovieCardProps> = memo(({ movie, index = 0 }) => {
                             strokeLinejoin="round"
                             strokeWidth={2}
                             d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                            fill={favorite ? "url(#cardHeartGradient)" : "none"}
+                            fill={favorite ? `url(#${gradientId})` : "none"}
                             stroke={favorite ? "none" : "currentColor"}
                         />
                     </motion.svg>

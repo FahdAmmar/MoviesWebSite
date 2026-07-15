@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Film,
@@ -21,13 +22,31 @@ const Footer: React.FC = () => {
     // Current year for copyright
     const currentYear = new Date().getFullYear();
 
+    // حالة نموذج النشرة البريدية (بريد المستخدم ورسالة التأكيد)
+    // ملاحظة: لا يوجد خادم فعلي حالياً لاستقبال الاشتراكات، لذا هذا
+    // النموذج يقدّم تجربة واجهة كاملة (تحقق + تأكيد) بانتظار ربطه
+    // بخدمة بريدية حقيقية مستقبلاً بدل أن يبقى بلا أي استجابة للمستخدم
+    const [newsletterEmail, setNewsletterEmail] = useState('');
+    const [subscribed, setSubscribed] = useState(false);
+
+    const handleNewsletterSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        if (!newsletterEmail.trim()) return;
+
+        setSubscribed(true);
+        setNewsletterEmail('');
+        // إخفاء رسالة التأكيد بعد فترة قصيرة
+        setTimeout(() => setSubscribed(false), 4000);
+    };
+
     // Quick navigation links
+    // ملاحظة: تم إبقاء هذه القائمة مقتصرة على المسارات (Routes) الموجودة
+    // فعلياً في App.tsx فقط. كانت تحتوي سابقاً على روابط لصفحات غير
+    // معرّفة (/movies, /series, /new-releases) تؤدي لصفحة فارغة عند
+    // النقر عليها لعدم وجود أي Route مطابق لها
     const quickLinks = [
         { to: '/', label: 'Home', icon: Film },
-        { to: '/movies', label: 'Movies', icon: Film },
-        { to: '/series', label: 'Series', icon: Film },
         { to: '/favorites', label: 'Favorites', icon: Heart },
-        { to: '/new-releases', label: 'New Releases', icon: Sparkles },
     ];
 
     // Help links
@@ -157,19 +176,29 @@ const Footer: React.FC = () => {
                             <p className="text-gray-400 text-sm mb-3">
                                 Subscribe to our newsletter to get the latest updates
                             </p>
-                            <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+                            <form className="flex gap-2" onSubmit={handleNewsletterSubmit}>
                                 <input
                                     type="email"
+                                    required
+                                    value={newsletterEmail}
+                                    onChange={(e) => setNewsletterEmail(e.target.value)}
                                     placeholder="Your email"
+                                    aria-label="Email address for newsletter"
                                     className="flex-1 px-4 py-2.5 bg-gray-900 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-rose-500/50 focus:ring-2 focus:ring-rose-500/20 transition-all duration-200"
                                 />
                                 <button
                                     type="submit"
+                                    aria-label="Subscribe to newsletter"
                                     className="px-4 py-2.5 bg-linear-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-lg hover:shadow-rose-500/25 active:scale-95"
                                 >
                                     <ArrowRight size={18} />
                                 </button>
                             </form>
+                            {subscribed && (
+                                <p role="status" className="text-emerald-400 text-xs mt-2">
+                                    Thanks! You&apos;re subscribed.
+                                </p>
+                            )}
                         </div>
 
                         {/* Contact Info */}

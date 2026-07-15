@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useId, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useMovieStore } from '../store/useMovieStore';
-import { Movie } from '../types';
+import type { Movie } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
-
-// --- Constants ---
-const MAX_FAVORITES = 10; // Define your application's limit
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { MAX_FAVORITES, NOTIFICATION_DURATION_MS } from '../constants';
 
 // --- Animation Variants ---
 const containerVariants = {
@@ -22,12 +21,14 @@ const imageVariants = {
 // --- Notification Component (Toast) ---
 const Notification: React.FC<{ message: string; type: 'error' | 'success'; onClose: () => void }> = ({ message, type, onClose }) => {
     useEffect(() => {
-        const timer = setTimeout(onClose, 3000);
+        const timer = setTimeout(onClose, NOTIFICATION_DURATION_MS);
         return () => clearTimeout(timer);
     }, [onClose]);
 
     return (
         <motion.div
+            role="status"
+            aria-live="polite"
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 20, x: '-50%' }}
@@ -36,7 +37,7 @@ const Notification: React.FC<{ message: string; type: 'error' | 'success'; onClo
                 : 'bg-green-900/90 border-green-500 text-white'
                 } backdrop-blur-md`}
         >
-            <span className="text-lg">{type === 'error' ? '⚠️' : '✅'}</span>
+            <span className="text-lg" aria-hidden="true">{type === 'error' ? '⚠️' : '✅'}</span>
             <span className="font-medium text-sm">{message}</span>
         </motion.div>
     );
@@ -49,6 +50,7 @@ const MovieDetails: React.FC = () => {
     // Store Selectors
     const selectedMovie = useMovieStore((state) => state.selectedMovie);
     const loading = useMovieStore((state) => state.loading);
+    const fetchError = useMovieStore((state) => state.error);
     const getMovieDetails = useMovieStore((state) => state.getMovieDetails);
     const toggleFavorite = useMovieStore((state) => state.toggleFavorite);
     const isFavorite = useMovieStore((state) => state.isFavorite);
@@ -59,11 +61,18 @@ const MovieDetails: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [notification, setNotification] = useState<{ message: string; type: 'error' | 'success' } | null>(null);
 
+    // معرّف فريد لتدرّج زر الإضافة إلى المفضلة (لا يوجد سوى نسخة واحدة
+    // من هذه الصفحة في وقت واحد، لكن useId يبقي الأسلوب متسقاً مع
+    // MovieCard ويحمي من أي تكرار مستقبلي)
+    const heartGradientId = useId();
+
     useEffect(() => {
         if (imdbID) {
             getMovieDetails(imdbID);
         }
     }, [imdbID, getMovieDetails]);
+
+    useDocumentTitle(selectedMovie ? selectedMovie.Title : 'Movie Details');
 
     const favorite = imdbID ? isFavorite(imdbID) : false;
 
@@ -131,8 +140,8 @@ const MovieDetails: React.FC = () => {
     if (!selectedMovie) {
         return (
             <div className="min-h-screen pt-20 flex items-center justify-center">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
-                    <p className="text-netflix-gray text-lg mb-4">Movie not found</p>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center px-4" role="alert">
+                    <p className="text-netflix-gray text-lg mb-4">{fetchError || 'Movie not found'}</p>
                     <Link to="/" className="text-netflix-red hover:underline font-medium">Back to Home</Link>
                 </motion.div>
             </div>
@@ -251,14 +260,14 @@ const MovieDetails: React.FC = () => {
                                         transition={{ duration: 0.4, type: "spring" }}
                                     >
                                         <defs>
-                                            <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <linearGradient id={heartGradientId} x1="0%" y1="0%" x2="100%" y2="100%">
                                                 <stop offset="0%" stopColor="#ff4b4b" />
                                                 <stop offset="100%" stopColor="#ff0055" />
                                             </linearGradient>
                                         </defs>
                                         <path
                                             d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                                            fill={favorite ? "url(#heartGradient)" : "none"}
+                                            fill={favorite ? `url(#${heartGradientId})` : "none"}
                                             stroke={favorite ? "none" : "currentColor"}
                                             strokeWidth="2"
                                             strokeLinecap="round"

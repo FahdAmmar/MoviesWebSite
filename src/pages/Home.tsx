@@ -3,16 +3,28 @@ import SearchBar from '../components/SearchBar';
 import MovieList from '../components/MovieList';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { useMovieStore } from '../store/useMovieStore';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { DEFAULT_SEARCH_QUERY } from '../constants';
 
 const Home: React.FC = () => {
     const movies = useMovieStore((state) => state.movies);
     const loading = useMovieStore((state) => state.loading);
     const error = useMovieStore((state) => state.error);
+    const searchQuery = useMovieStore((state) => state.searchQuery);
     const searchMovies = useMovieStore((state) => state.searchMovies);
 
+    useDocumentTitle('Home');
+
     useEffect(() => {
-        searchMovies('dark');
-    }, [searchMovies]);
+        // نُشغّل البحث الافتراضي فقط عندما لا توجد نتيجة بحث سابقة بعد.
+        // في النسخة السابقة كان هذا الاستدعاء يحدث بلا شرط في كل مرة
+        // يُعاد فيها تركيب الصفحة (مثلاً عند الرجوع من صفحة المفضلة)،
+        // مما كان يمسح بحث المستخدم الفعلي ويستبدله بالبحث الافتراضي
+        // "dark" دون أي تنبيه — وهو خلل واضح في تجربة الاستخدام.
+        if (!searchQuery) {
+            searchMovies(DEFAULT_SEARCH_QUERY);
+        }
+    }, [searchQuery, searchMovies]);
 
     return (
         <div className="min-h-screen pt-15 mx-auto">
@@ -36,13 +48,15 @@ const Home: React.FC = () => {
                 {loading && <SkeletonLoader />}
 
                 {error && !loading && (
-                    <div className="text-center py-12">
-                        <p className="text-red-500 text-lg">{error}</p>
+                    <div role="alert" className="text-center py-12">
+                        <p className="text-error text-lg">{error}</p>
                     </div>
                 )}
 
                 {!loading && !error && (
-                    <MovieList movies={movies} title={`Results (${movies.length})`} />
+                    <div aria-live="polite">
+                        <MovieList movies={movies} title={`Results (${movies.length})`} />
+                    </div>
                 )}
             </section>
         </div>
