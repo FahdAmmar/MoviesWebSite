@@ -3,6 +3,20 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "description": "A modern movie & TV show discovery app built with React 19, TypeScript, and the OMDb API.",
+  "author": "FahdAmmar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FahdAmmar/MoviesWebSite.git"
+  },
+  "homepage": "https://github.com/FahdAmmar/MoviesWebSite#readme",
+  "bugs": {
+    "url": "https://github.com/FahdAmmar/MoviesWebSite/issues"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

@@ -16,8 +16,38 @@ import { OMDB_BASE_URL } from '../constants';
 // راجع ملف .env.example لمعرفة كيفية تجهيزه محلياً.
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
+/**
+ * رسالة الخطأ المعروضة عند عدم توفر مفتاح API على الإطلاق.
+ * مكتوبة لتكون صحيحة في الحالتين: أثناء التطوير المحلي (حيث الحل هو
+ * ملف .env) وبعد النشر على استضافة مثل Vercel (حيث الحل هو إضافة
+ * متغير البيئة من لوحة التحكم ثم إعادة النشر، لأن Vite يُدرج قيمة
+ * المتغير داخل الحزمة المبنية وقت البناء لا وقت التشغيل).
+ */
+const MISSING_API_KEY_MESSAGE =
+    'Missing OMDb API key. Add VITE_OMDB_API_KEY to your local .env file, or to your hosting provider\'s environment variables and redeploy.';
+
 /** مفتاح التخزين المستخدم في localStorage لحفظ قائمة المفضلة */
 const FAVORITES_STORAGE_KEY = 'favorites';
+
+/**
+ * يحاول استخراج رسالة الخطأ الفعلية التي أرجعتها OMDb (مثل "Invalid API
+ * key!" أو "Request limit reached!") من استجابة الخطأ.
+ *
+ * OMDb لا تُرجع دائماً HTTP 200 مع Response: "False" عند حدوث مشكلة —
+ * ففي حالات مفتاح غير صالح أو تجاوز حد الطلبات اليومي، تُرجع غالباً حالة
+ * HTTP خارج نطاق 2xx (401 عادة) رغم أن جسم الاستجابة لا يزال يحتوي على
+ * رسالة JSON واضحة. axios يُعامل أي حالة خارج 2xx كخطأ ويرمي استثناءً
+ * قبل الوصول إلى فحص `data.Response`، لذا كانت هذه الرسالة المفيدة تُفقد
+ * وتُستبدل برسالة عامة لا تساعد المستخدم على تشخيص أن المشكلة تحديداً
+ * في مفتاح الـ API. هذه الدالة تستعيد الرسالة الأصلية إن كانت متاحة.
+ */
+function extractOmdbErrorMessage(error: unknown): string | null {
+    if (axios.isAxiosError(error)) {
+        const data = error.response?.data as { Error?: string } | undefined;
+        if (data?.Error) return data.Error;
+    }
+    return null;
+}
 
 interface MovieStore {
     movies: Movie[];
@@ -72,7 +102,7 @@ export const useMovieStore = create<MovieStore>((set, get) => ({
 
         if (!API_KEY) {
             set({
-                error: 'Missing OMDb API key. Please add VITE_OMDB_API_KEY to your .env file.',
+                error: MISSING_API_KEY_MESSAGE,
                 loading: false,
                 movies: [],
             });
@@ -102,14 +132,16 @@ export const useMovieStore = create<MovieStore>((set, get) => ({
                 // تم إلغاء الطلب عمداً لصالح بحث أحدث، لا حاجة لعرض خطأ
                 return;
             }
-            set({ error: 'An error occurred while searching.', loading: false });
+            // نعرض رسالة OMDb الفعلية إن توفرت (مثل "Invalid API key!")
+            // بدل رسالة عامة لا تشرح للمستخدم أن المشكلة تحديداً في المفتاح
+            set({ error: extractOmdbErrorMessage(error) ?? 'An error occurred while searching.', movies: [], loading: false });
         }
     },
 
     getMovieDetails: async (imdbID: string) => {
         if (!API_KEY) {
             set({
-                error: 'Missing OMDb API key. Please add VITE_OMDB_API_KEY to your .env file.',
+                error: MISSING_API_KEY_MESSAGE,
                 loading: false,
                 selectedMovie: null,
             });
@@ -144,7 +176,7 @@ export const useMovieStore = create<MovieStore>((set, get) => ({
             if (axios.isCancel(error) || (axios.isAxiosError(error) && error.code === 'ERR_CANCELED')) {
                 return;
             }
-            set({ error: 'Failed to load movie details.', selectedMovie: null, loading: false });
+            set({ error: extractOmdbErrorMessage(error) ?? 'Failed to load movie details.', selectedMovie: null, loading: false });
         }
     },
 
